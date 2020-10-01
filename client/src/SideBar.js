@@ -9,7 +9,7 @@ import SidebarChat from "./SidebarChat";
 function SideBar() {
   return (
     <div className="sidebar">
-      <h4>I am sidebar</h4>
+     
       <div className="sidebar__header">
       <Avatar src="https://avatars1.githubusercontent.com/u/61996861?s=460&u=33f721345c831fed83eb8a92cb3a289680bad660&v=4" alt="avatar"/>
         <div className="sidebar__headerRight">

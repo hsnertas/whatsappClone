@@ -6,7 +6,7 @@ import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import AttachFile from "@material-ui/icons/AttachFile";
 import EmojiEmotionsOutlinedIcon from '@material-ui/icons/EmojiEmotionsOutlined';
 import MicIcon from "@material-ui/icons/Mic"
-import SidebarChat from "./SidebarChat";
+
 function Chat() {
     return (
         <div className="chat">
