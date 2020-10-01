@@ -4,6 +4,8 @@ import { Avatar, IconButton } from "@material-ui/core";
 import MoreVert from "@material-ui/icons/MoreVert";
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 import AttachFile from "@material-ui/icons/AttachFile";
+import EmojiEmotionsOutlinedIcon from '@material-ui/icons/EmojiEmotionsOutlined';
+import MicIcon from "@material-ui/icons/Mic"
 import SidebarChat from "./SidebarChat";
 function Chat() {
     return (
@@ -39,6 +41,14 @@ function Chat() {
     <span className="chat__timestamp">{new Date().toUTCString()}</span>
                
                </p>
+           </div>
+           <div className="chat__footer">
+             <EmojiEmotionsOutlinedIcon/>
+             <form>
+               <input placeholder="Type a message" type="text"/>
+               <button type="submit">Send a message</button>
+             </form>
+             <MicIcon/>
            </div>
         </div>
     )
