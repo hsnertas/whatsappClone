@@ -1,48 +1,86 @@
 // importing
 import express from "express";
 import mongoose from "mongoose";
+import Pusher from "pusher";
 
 import Messages from "./dbMessages.js";
 //app config
-const app=express();
-const port=process.env.PORT || 9000;
+const app = express();
+const port = process.env.PORT || 9000;
+
+const pusher = new Pusher({
+  appId: "1083579",
+  key: "2ea69fe42b2f540e79f0",
+  secret: "f44e4fb3d631342e0b2a",
+  cluster: "us2",
+  encrypted: true,
+});
 
 // middleware
 app.use(express.json());
 
 // db config
 
-const connection_url="mongodb+srv://admin:aFnXav5yFzvLxPSu@cluster0.jjtw9.mongodb.net/whatsappdb?retryWrites=true&w=majority"
-mongoose.connect(connection_url,{
-useCreateIndex:true,
-useNewUrlParser:true,
-useUnifiedTopology:true})
+
+const connection_url =
+  "mongodb+srv://admin:aFnXav5yFzvLxPSu@cluster0.jjtw9.mongodb.net/whatsappdb?retryWrites=true&w=majority";
+mongoose.connect(connection_url, {
+  useCreateIndex: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const db = mongoose.connection;
+
+db.once("open", () => {
+  console.log("db connected");
+
+const msgCollection=db.collection("messagecontents");
+const changeStream = msgCollection.watch();
+
+changeStream.on("change", (change) => {
+  console.log(change);
+  if (change.operationType==='inser'){
+    const  messageDetails = change.fullDocument;
+    pusher.trigger("message", "inserted",
+    {
+      name:messageDetails.user,
+      message:messageDetails.message
+    }
+    );
+  }else{
+    console.log("error triggering pusher")
+  }
+
+
+});
+});
+
 // ????
 
-
 // api routes
-app.get("/", (req, res)=>res.status(200).send("hello world"));
-app.get('/messages/sync', (req, res)=> {
-    Messages.find((err, data)=>{
-    if(err){
-        res.status(500).send(err);
-    }else{
-        res.status(200).send(data);
+app.get("/", (req, res) => res.status(200).send("hello world"));
+app.get("/messages/sync", (req, res) => {
+  Messages.find((err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.status(200).send(data);
     }
-})
-})
+  });
+});
 
-app.post('/messages/new', (req, res)=> {
-    const dbMessage=req.body
+app.post("/messages/new", (req, res) => {
+  const dbMessage = req.body;
 
-    Messages.create(dbMessage, (err, data)=>{
-        if(err){
-            res.status(500).send(err)
-        }else{
-            res.status(201).send(`new message created: \n ${data}`)
-        }
-    })
-})
+  Messages.create(dbMessage, (err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.status(201).send(`new message created: \n ${data}`);
+    }
+  });
+});
 
 // listen
-app.listen(port, ()=> console.log(`Listening on localhost:${port}`));
+app.listen(port, () => console.log(`Listening on localhost:${port}`));
