@@ -2,6 +2,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import Pusher from "pusher";
+import cors from "cors";
 
 import Messages from "./dbMessages.js";
 //app config
@@ -18,11 +19,7 @@ const pusher = new Pusher({
 
 // middleware
 app.use(express.json());
-app.use((req, res, next)=>{
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Headers", "*");
-  next();
-})
+app.use(cors());
 
 // db config
 
@@ -47,7 +44,7 @@ changeStream.on("change", (change) => {
   console.log(change);
   if (change.operationType==='insert'){
     const  messageDetails = change.fullDocument;
-    pusher.trigger("message", "inserted",
+    pusher.trigger("messages", "inserted",
     {
       name:messageDetails.user,
       message:messageDetails.message
