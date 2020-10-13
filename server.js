@@ -47,7 +47,9 @@ changeStream.on("change", (change) => {
     pusher.trigger("messages", "inserted",
     {
       name:messageDetails.user,
-      message:messageDetails.message
+      message:messageDetails.message,
+      timestamp:messageDetails.timestamp,
+      received:messageDetails.recevied
     }
     );
   }else{
